@@ -1,0 +1,38 @@
+{
+  "id": "dnd5e-currency-advancement",
+  "title": "DnD5e Currency Advancement",
+  "version": "1.0.0",
+  "compatibility": {
+    "minimum": "11",
+    "verified": "11"
+  },
+  "description": "",
+  "authors": [
+    {
+      "name": "TPNils"
+    }
+  ],
+  "url": "https://github.com/TPNils/dnd5e-currency-advancement",
+  "manifest": "https://github.com/TPNils/dnd5e-currency-advancement/releases/download/latest/module.json",
+  "download": "https://github.com/TPNils/dnd5e-currency-advancement/releases/download/v2.3.1/module.zip",
+  "bugs": "https://github.com/TPNils/dnd5e-currency-advancement/issues",
+  "esmodules": [
+    "scripts/main.js"
+  ],
+  "languages": [],
+  "relationships": {
+    "requires": [],
+    "recommends": [],
+    "systems": [
+      {
+        "id": "dnd5e",
+        "type": "system",
+        "compatibility": {
+          "minimum": "2.4.0",
+          "verified": "2.4.1"
+        }
+      }
+    ]
+  },
+  "socket": false
+}
