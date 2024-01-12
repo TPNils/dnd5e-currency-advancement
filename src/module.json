@@ -3,7 +3,7 @@
   "title": "DnD5e Currency Advancement",
   "version": "1.0.0",
   "compatibility": {
-    "minimum": "11",
+    "minimum": "10.303",
     "verified": "11"
   },
   "description": "",
