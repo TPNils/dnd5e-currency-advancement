@@ -58,7 +58,7 @@ interface NumberFieldOptions extends DataFieldOptions {
   /** Must the number be an integer? */
   integer?: boolean;
   /** Must the number be positive? */
-  positive?: number;
+  positive?: boolean;
   /** 
    * An array of values or an object of values/labels which represent allowed choices for the field.
    * A function may be provided which dynamically returns the array of choices. 
