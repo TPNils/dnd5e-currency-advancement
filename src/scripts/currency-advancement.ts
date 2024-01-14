@@ -31,7 +31,7 @@ class CurrencyAdvancementData extends foundry.abstract.DataModel<ICurrencyAdvanc
 
 }
 
-export class CurrencyAdvancement extends dnd5e.documents.advancement.Advancement<CurrencyAdvancementData> {
+export class CurrencyAdvancement extends dnd5e.documents.advancement.Advancement<ICurrencyAdvancementData, ICurrencyAdvancementData> {
 
   static get metadata() {
     return foundry.utils.mergeObject(super.metadata, {
@@ -52,9 +52,6 @@ export class CurrencyAdvancement extends dnd5e.documents.advancement.Advancement
 
   /** @inheritdoc */
   public summaryForLevel(level: number, options: {configMode?: boolean} = {}): string {
-    if (!options.configMode) {
-      return game.i18n.localize("DND5E.CurrencyGP");
-    }
     const summaryParts = new Set<string>();
     for (const currency of CurrencyAdvancementConfig.getCurrencies()) {
       if (this.configuration[currency.key] > 0) {
@@ -65,6 +62,30 @@ export class CurrencyAdvancement extends dnd5e.documents.advancement.Advancement
       summaryParts.add(`0 ${dnd5e.config.currencies.gp.label}`);
     }
     return dnd5e.documents.Trait.localizedList({grants: summaryParts})
+  }
+
+  /** @inheritdoc */
+  public async apply(level: number, flowFormData: object): Promise<void> {
+    const currencyUpdate = deepClone((this.actor as any).system.currency);
+    for (const currencyKey in this.configuration) {
+      currencyUpdate[currencyKey] += this.configuration[currencyKey];
+    }
+    (this.actor as any as foundry.abstract.DataModel).updateSource({system: {currency: currencyUpdate}});
+  }
+
+  /** @inheritdoc */
+  public async restore(level: number, reverseData: object): Promise<void> {
+    this.apply(level, reverseData);
+  }
+
+  /** @inheritdoc */
+  public async reverse(level: number): Promise<object> {
+    const currencyUpdate = deepClone((this.actor as any).system.currency);
+    for (const currencyKey in this.configuration) {
+      currencyUpdate[currencyKey] = Math.max(0, currencyUpdate[currencyKey] - this.configuration[currencyKey]);
+    }
+    (this.actor as any as foundry.abstract.DataModel).updateSource({system: {currency: currencyUpdate}});
+    return {};
   }
   
 }

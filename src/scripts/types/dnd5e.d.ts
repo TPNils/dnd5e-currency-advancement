@@ -26,11 +26,11 @@ export interface Currency {
   conversion: number;
 }
 
-export interface AdvancementData<T = any> {
+export interface AdvancementData<CONFIG = any, VALUE = any> {
   _id?: string;
   type: string;
-  configuration: T;
-  value: any;
+  configuration: CONFIG;
+  value: VALUE;
   level?: number;
   title?: string;
   icon?: string;
@@ -93,7 +93,7 @@ class AdvancementFlowCls<DATA = object, T extends AdvancementCls = AdvancementCl
 
 }
 
-class AdvancementCls<T = any> extends foundry.abstract.DataModel<AdvancementData<T>, Item> {
+class AdvancementCls<CONFIG = any, VALUE = any> extends foundry.abstract.DataModel<AdvancementData<CONFIG, VALUE>, Item> {
 
   static availableForItem(item: Item): boolean;
   
