@@ -1,6 +1,6 @@
 export {};
 
-class DataModelCls<DATA, PARENT extends foundry.abstract.Document<any, any> = foundry.abstract.Document<any, any>> {
+class DataModelCls<DATA extends object, PARENT extends foundry.abstract.Document<any, any> = foundry.abstract.Document<any, any>> implements DATA {
   constructor(data?: DATA, options?: {parent?: any, strict?: boolean, [key: string]: any});
 
   readonly _source: Readonly<DATA>;

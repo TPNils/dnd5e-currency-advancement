@@ -1,3 +1,6 @@
+import { CurrencyAdvancementConfig } from "./currency-advancement-config.js";
+import { CurrencyAdvancementFlow } from "./currency-advancement-flow.js";
+import { AdvancementData } from "./types/dnd5e.js";
 import type { DataSchema } from "./types/foundry";
 
 export interface ICurrencyAdvancementData {
@@ -28,7 +31,7 @@ class CurrencyAdvancementData extends foundry.abstract.DataModel<ICurrencyAdvanc
 
 }
 
-export class CurrencyAdvancement extends dnd5e.documents.advancement.Advancement {
+export class CurrencyAdvancement extends dnd5e.documents.advancement.Advancement<CurrencyAdvancementData> {
 
   static get metadata() {
     return foundry.utils.mergeObject(super.metadata, {
@@ -45,6 +48,23 @@ export class CurrencyAdvancement extends dnd5e.documents.advancement.Advancement
         // flow: CurrencyAdvancementFlow,
       },
     });
+  }
+
+  /** @inheritdoc */
+  public summaryForLevel(level: number, options: {configMode?: boolean} = {}): string {
+    if (!options.configMode) {
+      return game.i18n.localize("DND5E.CurrencyGP");
+    }
+    const summaryParts = new Set<string>();
+    for (const currency of CurrencyAdvancementConfig.getCurrencies()) {
+      if (this.configuration[currency.key] > 0) {
+        summaryParts.add(`${this.configuration[currency.key]} ${currency.label}`);
+      }
+    }
+    if (summaryParts.size === 0) {
+      summaryParts.add(`0 ${dnd5e.config.currencies.gp.label}`);
+    }
+    return dnd5e.documents.Trait.localizedList({grants: summaryParts})
   }
   
 }

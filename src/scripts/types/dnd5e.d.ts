@@ -26,6 +26,17 @@ export interface Currency {
   conversion: number;
 }
 
+export interface AdvancementData<T = any> {
+  _id?: string;
+  type: string;
+  configuration: T;
+  value: any;
+  level?: number;
+  title?: string;
+  icon?: string;
+  classRestriction?: 'primary' | 'secondary';
+}
+
 /**
  * Base class for the advancement interface displayed by the advancement prompt that should be subclassed by
  * individual advancement types.
@@ -82,7 +93,8 @@ class AdvancementFlowCls<DATA = object, T extends AdvancementCls = AdvancementCl
 
 }
 
-class AdvancementCls<T extends AdvancementData = AdvancementData> extends foundry.abstract.DataModel<T, Item> implements T {
+class AdvancementCls<T = any> extends foundry.abstract.DataModel<AdvancementData<T>, Item> {
+
   static availableForItem(item: Item): boolean;
   
   /**
@@ -102,13 +114,22 @@ class AdvancementCls<T extends AdvancementData = AdvancementData> extends foundr
     validItemTypes: string[];
   };
 
-  readonly id: string;
-  readonly uuid: string;
-  readonly actor: Actor;
-  readonly item: Item;
-  readonly levels: number[];
-  readonly appliesToClass: boolean;
-  readonly actor: Actor;
+  public readonly id: string;
+  public readonly uuid: string;
+  public readonly actor: Actor;
+  public readonly item: Item;
+  public readonly levels: number[];
+  public readonly appliesToClass: boolean;
+  public readonly actor: Actor;
+
+  public _id?: string;
+  public type: string;
+  public configuration: T;
+  public value: any;
+  public level?: number;
+  public title?: string;
+  public icon?: string;
+  public classRestriction?: 'primary' | 'secondary';
 
   /**
    * Prepare data for the Advancement.
@@ -245,15 +266,15 @@ declare global {
       }
     }
     namespace config {
-      class advancementTypes {static [key: string]: typeof AdvancementCls;};
+      class advancementTypes {static [key: string]: typeof dnd5e.documents.advancement.Advancement<any>;};
       namespace advancementTypes {
-        const AbilityScoreImprovement: typeof AdvancementCls;
-        const HitPoints: typeof AdvancementCls;
-        const ItemChoice: typeof AdvancementCls;
-        const ItemGrant: typeof AdvancementCls;
-        const ScaleValue: typeof AdvancementCls;
-        const Size: typeof AdvancementCls;
-        const Trait: typeof AdvancementCls;
+        const AbilityScoreImprovement: typeof dnd5e.documents.advancement.Advancement<any>;
+        const HitPoints: typeof dnd5e.documents.advancement.Advancement<any>;
+        const ItemChoice: typeof dnd5e.documents.advancement.Advancement<any>;
+        const ItemGrant: typeof dnd5e.documents.advancement.Advancement<any>;
+        const ScaleValue: typeof dnd5e.documents.advancement.Advancement<any>;
+        const Size: typeof dnd5e.documents.advancement.Advancement<any>;
+        const Trait: typeof dnd5e.documents.advancement.Advancement<any>;
       }
       class armorIds {static [key: string]: string;};
       class currencies {static [key: string]: Currency;};
