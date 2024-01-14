@@ -2,12 +2,51 @@ export {};
 
 interface DnD5e {
   [key: string]: any;
+  applications: Applications;
   config: Config;
   documents: Documents;
 }
 
+interface AdvancementTypes {
+  [key: string]: any;
+  AbilityScoreImprovement: typeof Advancement;
+  HitPoints: typeof Advancement;
+  ItemChoice: typeof Advancement;
+  ItemGrant: typeof Advancement;
+  ScaleValue: typeof Advancement;
+  Size: typeof Advancement;
+  Trait: typeof Advancement;
+}
+
+interface Applications {
+  advancement: {
+    [key: string]: typeof FormApplication;
+    AbilityScoreImprovementConfig: typeof AdvancementFlow,
+    AbilityScoreImprovementFlow: typeof AdvancementFlow,
+    AdvancementConfig: typeof AdvancementFlow,
+    AdvancementConfirmationDialog: typeof AdvancementFlow,
+    AdvancementFlow: typeof AdvancementFlow,
+    AdvancementManager: typeof AdvancementFlow,
+    AdvancementMigrationDialog: typeof AdvancementFlow,
+    AdvancementSelection: typeof AdvancementFlow,
+    HitPointsConfig: typeof AdvancementFlow,
+    HitPointsFlow: typeof AdvancementFlow,
+    ItemChoiceConfig: typeof AdvancementFlow,
+    ItemChoiceFlow: typeof AdvancementFlow,
+    ItemGrantConfig: typeof AdvancementFlow,
+    ItemGrantFlow: typeof AdvancementFlow,
+    ScaleValueConfig: typeof AdvancementFlow,
+    ScaleValueFlow: typeof AdvancementFlow,
+    SizeConfig: typeof AdvancementFlow,
+    SizeFlow: typeof AdvancementFlow,
+    TraitConfig: typeof AdvancementFlow,
+    TraitFlow: typeof AdvancementFlow,
+  }
+}
+
 interface Config {
   [key: string]: any;
+  advancementTypes: AdvancementTypes;
   armorIds: {
     [key: string]: string;
   }
@@ -57,16 +96,20 @@ interface ConfigTrait {
 
 interface Documents {
   [key: string]: any;
+  Trait: {
+    [key: string]: any;
+    localizedList(loc: { grants?: Set<string>, choices?: Array<{count: number; pool: Set<string>;}> }): string;
+  }
   advancement: {
     [key: string]: any;
     Advancement: typeof Advancement;
   }
 }
 
-interface AdvancementData {
+interface AdvancementData<T = any> {
   _id?: string;
   type: string;
-  configuration: any;
+  configuration: T;
   value: any;
   level?: number;
   title?: string;
@@ -74,8 +117,69 @@ interface AdvancementData {
   classRestriction?: 'primary' | 'secondary';
 }
 
-export class Advancement extends foundry.abstract.DataModel<AdvancementData, Item> {
+/**
+ * Base class for the advancement interface displayed by the advancement prompt that should be subclassed by
+ * individual advancement types.
+ *
+ * @param item           Item to which the advancement belongs.
+ * @param advancementId  ID of the advancement this flow modifies.
+ * @param level          Level for which to configure this flow.
+ * @param options        Application rendering options.
+ */
+class AdvancementFlow<DATA = object, T extends Advancement = Advancement<AdvancementData<DATA>>> extends FormApplication<FormApplicationOptions, FormApplication.Data<AdvancementData<DATA>>> {
+  
+  public constructor(item: Item, advancementId: string, level: number, options?: object);
+
+  /**
+   * The item that houses the Advancement.
+   */
+  public item: Item;
+
+  /**
+   * ID of the advancement this flow modifies.
+   */
+  private _advancementId: string;
+
+  /**
+   * Level for which to configure this flow.
+   */
+  public level: number;
+  
+  /**
+   * Data retained by the advancement manager during a reverse step. If restoring data using Advancement#restore,
+   * this data should be used when displaying the flow's form.
+   */
+  public retainedData: object|null;
+
+  /**
+   * The Advancement object this flow modifies.
+   */
+  public get advancement(): Advancement | null;
+
+  /* -------------------------------------------- */
+
+  /**
+   * Set the retained data for this flow. This method gives the flow a chance to do any additional prep
+   * work required for the retained data before the application is rendered.
+   * @param data  Retained data associated with this flow.
+   */
+  public retainData(data: object): Promise<void>;
+
+  /** @inheritdoc */
+  public getData(): {appId: string; advancement: Advancement; type: string; title: string; summary: string; level: number;};
+  
+  /** @inheritdoc */
+  public _updateObject(event, formData): Promise<unknown>;
+
+}
+
+class Advancement<T extends AdvancementData = AdvancementData> extends foundry.abstract.DataModel<T, Item> implements T {
   static availableForItem(item: Item): boolean;
+  
+  /**
+   * Name of this advancement type that will be stored in config and used for lookups.
+   */
+  static readonly typeName: string;
   static readonly metadata: {
     apps: {
       config: FormApplication;

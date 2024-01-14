@@ -78,7 +78,7 @@ interface StringFieldOptions extends DataFieldOptions {
   choices?: string[] | object | (() => string[] | object);
 }
 
-interface DataSchema {
+export interface DataSchema {
   [key: string]: DataFieldAbstract;
 }
 
