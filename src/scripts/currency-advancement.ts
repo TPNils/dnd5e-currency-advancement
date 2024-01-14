@@ -41,7 +41,7 @@ export class CurrencyAdvancement extends dnd5e.documents.advancement.Advancement
       hint: '0 ' + game.i18n.localize("DND5E.CurrencyGP"),
       validItemTypes: new Set(["background", "class", "race"]),
       apps: {
-        // config: CurrencyAdvancementConfig,
+        config: CurrencyAdvancementConfig,
         // flow: CurrencyAdvancementFlow,
       },
     });

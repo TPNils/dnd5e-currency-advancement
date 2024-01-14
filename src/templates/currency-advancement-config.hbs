@@ -1,0 +1,21 @@
+<form autocomplete="off">
+  <table>
+    <thead>
+      <tr>
+      {{#each currencies as |currency|}}
+        <th style="width:{{@root.currenciesWidthPercent}}%">{{currency.label}}</th>
+      {{/each}}
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr>
+      {{#each currencies as |currency|}}
+        <td>
+          <input type="number" name="configuration.{{currency.key}}" step="1" value="{{getProperty @root.configuration currency.key}}">
+        </td>
+      {{/each}}
+      </tr>
+    </tbody>
+  </table>
+</form>

@@ -1,80 +1,6 @@
 export {};
 
-interface DnD5e {
-  [key: string]: any;
-  applications: Applications;
-  config: Config;
-  documents: Documents;
-}
-
-interface AdvancementTypes {
-  [key: string]: any;
-  AbilityScoreImprovement: typeof Advancement;
-  HitPoints: typeof Advancement;
-  ItemChoice: typeof Advancement;
-  ItemGrant: typeof Advancement;
-  ScaleValue: typeof Advancement;
-  Size: typeof Advancement;
-  Trait: typeof Advancement;
-}
-
-interface Applications {
-  advancement: {
-    [key: string]: typeof FormApplication;
-    AbilityScoreImprovementConfig: typeof AdvancementFlow,
-    AbilityScoreImprovementFlow: typeof AdvancementFlow,
-    AdvancementConfig: typeof AdvancementFlow,
-    AdvancementConfirmationDialog: typeof AdvancementFlow,
-    AdvancementFlow: typeof AdvancementFlow,
-    AdvancementManager: typeof AdvancementFlow,
-    AdvancementMigrationDialog: typeof AdvancementFlow,
-    AdvancementSelection: typeof AdvancementFlow,
-    HitPointsConfig: typeof AdvancementFlow,
-    HitPointsFlow: typeof AdvancementFlow,
-    ItemChoiceConfig: typeof AdvancementFlow,
-    ItemChoiceFlow: typeof AdvancementFlow,
-    ItemGrantConfig: typeof AdvancementFlow,
-    ItemGrantFlow: typeof AdvancementFlow,
-    ScaleValueConfig: typeof AdvancementFlow,
-    ScaleValueFlow: typeof AdvancementFlow,
-    SizeConfig: typeof AdvancementFlow,
-    SizeFlow: typeof AdvancementFlow,
-    TraitConfig: typeof AdvancementFlow,
-    TraitFlow: typeof AdvancementFlow,
-  }
-}
-
-interface Config {
-  [key: string]: any;
-  advancementTypes: AdvancementTypes;
-  armorIds: {
-    [key: string]: string;
-  }
-  traits: {
-    [key: string]: ConfigTrait;
-    armor: ConfigTrait;
-    ci: ConfigTrait;
-    di: ConfigTrait;
-    dr: ConfigTrait;
-    dv: ConfigTrait;
-    languages: ConfigTrait;
-    saves: ConfigTrait;
-    skills: ConfigTrait;
-    tool: ConfigTrait;
-    weapon: ConfigTrait;
-  }
-  shieldIds: {
-    [key: string]: string;
-  }
-  toolType: {
-    [key: string]: string;
-  }
-  weaponIds: {
-    [key: string]: string;
-  }
-}
-
-interface ConfigTrait {
+export interface ConfigTrait {
   actorKeyPath?: string;
   children?: {
     [key: string]: string;
@@ -94,27 +20,10 @@ interface ConfigTrait {
   }
 }
 
-interface Documents {
-  [key: string]: any;
-  Trait: {
-    [key: string]: any;
-    localizedList(loc: { grants?: Set<string>, choices?: Array<{count: number; pool: Set<string>;}> }): string;
-  }
-  advancement: {
-    [key: string]: any;
-    Advancement: typeof Advancement;
-  }
-}
-
-interface AdvancementData<T = any> {
-  _id?: string;
-  type: string;
-  configuration: T;
-  value: any;
-  level?: number;
-  title?: string;
-  icon?: string;
-  classRestriction?: 'primary' | 'secondary';
+export interface Currency {
+  label: string;
+  abbreviation: string;
+  conversion: number;
 }
 
 /**
@@ -126,7 +35,7 @@ interface AdvancementData<T = any> {
  * @param level          Level for which to configure this flow.
  * @param options        Application rendering options.
  */
-class AdvancementFlow<DATA = object, T extends Advancement = Advancement<AdvancementData<DATA>>> extends FormApplication<FormApplicationOptions, FormApplication.Data<AdvancementData<DATA>>> {
+class AdvancementFlowCls<DATA = object, T extends AdvancementCls = AdvancementCls<AdvancementData<DATA>>> extends FormApplication<FormApplicationOptions, FormApplication.Data<AdvancementData<DATA>>> {
   
   public constructor(item: Item, advancementId: string, level: number, options?: object);
 
@@ -154,7 +63,7 @@ class AdvancementFlow<DATA = object, T extends Advancement = Advancement<Advance
   /**
    * The Advancement object this flow modifies.
    */
-  public get advancement(): Advancement | null;
+  public get advancement(): AdvancementCls | null;
 
   /* -------------------------------------------- */
 
@@ -166,14 +75,14 @@ class AdvancementFlow<DATA = object, T extends Advancement = Advancement<Advance
   public retainData(data: object): Promise<void>;
 
   /** @inheritdoc */
-  public getData(): {appId: string; advancement: Advancement; type: string; title: string; summary: string; level: number;};
+  public getData(): {appId: string; advancement: AdvancementCls; type: string; title: string; summary: string; level: number;};
   
   /** @inheritdoc */
   public _updateObject(event, formData): Promise<unknown>;
 
 }
 
-class Advancement<T extends AdvancementData = AdvancementData> extends foundry.abstract.DataModel<T, Item> implements T {
+class AdvancementCls<T extends AdvancementData = AdvancementData> extends foundry.abstract.DataModel<T, Item> implements T {
   static availableForItem(item: Item): boolean;
   
   /**
@@ -264,7 +173,7 @@ class Advancement<T extends AdvancementData = AdvancementData> extends foundry.a
    * @param updates  Updates to apply to this advancement.
    * @returns        This advancement after updates have been applied.
    */
-  public async update(updates: object): Promise<Advancement>;
+  public async update(updates: object): Promise<AdvancementCls>;
 
   /* -------------------------------------------- */
 
@@ -273,7 +182,7 @@ class Advancement<T extends AdvancementData = AdvancementData> extends foundry.a
    * @param updates  Updates to apply to this advancement.
    * @returns        This advancement after updates have been applied.
    */
-  public updateSource(updates: object): Advancement;
+  public updateSource(updates: object): AdvancementCls;
 
   /**
    * Serialize salient information for this Advancement when dragging it.
@@ -309,5 +218,79 @@ class Advancement<T extends AdvancementData = AdvancementData> extends foundry.a
 }
 
 declare global {
-  export const dnd5e: DnD5e;
+  namespace dnd5e {
+    namespace applications {
+      class advancement {static [key: string]: typeof AdvancementFlowCls;};
+      namespace advancement {
+        const AbilityScoreImprovementConfig: typeof AdvancementFlowCls;
+        const AbilityScoreImprovementFlow: typeof AdvancementFlowCls;
+        const AdvancementConfig: typeof AdvancementFlowCls;
+        const AdvancementConfirmationDialog: typeof AdvancementFlowCls;
+        const AdvancementFlow: typeof AdvancementFlowCls;
+        const AdvancementManager: typeof AdvancementFlowCls;
+        const AdvancementMigrationDialog: typeof AdvancementFlowCls;
+        const AdvancementSelection: typeof AdvancementFlowCls;
+        const HitPointsConfig: typeof AdvancementFlowCls;
+        const HitPointsFlow: typeof AdvancementFlowCls;
+        const ItemChoiceConfig: typeof AdvancementFlowCls;
+        const ItemChoiceFlow: typeof AdvancementFlowCls;
+        const ItemGrantConfig: typeof AdvancementFlowCls;
+        const ItemGrantFlow: typeof AdvancementFlowCls;
+        const ScaleValueConfig: typeof AdvancementFlowCls;
+        const ScaleValueFlow: typeof AdvancementFlowCls;
+        const SizeConfig: typeof AdvancementFlowCls;
+        const SizeFlow: typeof AdvancementFlowCls;
+        const TraitConfig: typeof AdvancementFlowCls;
+        const TraitFlow: typeof AdvancementFlowCls;
+      }
+    }
+    namespace config {
+      class advancementTypes {static [key: string]: typeof AdvancementCls;};
+      namespace advancementTypes {
+        const AbilityScoreImprovement: typeof AdvancementCls;
+        const HitPoints: typeof AdvancementCls;
+        const ItemChoice: typeof AdvancementCls;
+        const ItemGrant: typeof AdvancementCls;
+        const ScaleValue: typeof AdvancementCls;
+        const Size: typeof AdvancementCls;
+        const Trait: typeof AdvancementCls;
+      }
+      class armorIds {static [key: string]: string;};
+      class currencies {static [key: string]: Currency;};
+      namespace currencies {
+        const cp: Currency;
+        const sp: Currency;
+        const ep: Currency;
+        const gp: Currency;
+        const pp: Currency;
+      }
+      class traits {static [key: string]: ConfigTrait;};
+      namespace traits {
+        const armor: ConfigTrait;
+        const ci: ConfigTrait;
+        const di: ConfigTrait;
+        const dr: ConfigTrait;
+        const dv: ConfigTrait;
+        const languages: ConfigTrait;
+        const saves: ConfigTrait;
+        const skills: ConfigTrait;
+        const tool: ConfigTrait;
+        const weapon: ConfigTrait;
+      }
+      class shieldIds {static [key: string]: string;};
+      class toolType {static [key: string]: string;};
+      class weaponIds {static [key: string]: string;};
+    }
+    namespace documents {
+      class advancement {static [key: string]: any;};
+      namespace advancement {
+        const Advancement = AdvancementCls;
+      }
+      
+      class Trait {static [key: string]: any;};
+      namespace Trait {
+        const localizedList: (loc: { grants?: Set<string>, choices?: Array<{count: number; pool: Set<string>;}> }) => string;
+      };
+    }
+  }
 }
