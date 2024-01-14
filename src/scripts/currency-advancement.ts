@@ -1,5 +1,6 @@
 import { CurrencyAdvancementConfig } from "./currency-advancement-config.js";
 import { CurrencyAdvancementFlow } from "./currency-advancement-flow.js";
+import { AdvancementData } from "./types/dnd5e.js";
 import type { DataSchema } from "./types/foundry";
 
 export interface ICurrencyAdvancementData {
@@ -40,13 +41,40 @@ export class CurrencyAdvancement extends dnd5e.documents.advancement.Advancement
       },
       icon: "icons/commodities/currency/coins-assorted-mix-copper-silver-gold.webp",
       title: game.i18n.localize("DND5E.Currency"),
-      hint: '0 ' + game.i18n.localize("DND5E.CurrencyGP"),
+      // hint: '0 ' + game.i18n.localize("DND5E.CurrencyGP"),
       validItemTypes: new Set(["background", "class", "race"]),
       apps: {
         config: CurrencyAdvancementConfig,
         flow: CurrencyAdvancementFlow,
       },
     });
+  }
+
+  public static autoDetectCurrencies(description: string): ICurrencyAdvancementData {
+    const data: ICurrencyAdvancementData = {
+      cp: 0,
+      ep: 0,
+      gp: 0,
+      pp: 0,
+      sp: 0,
+    }
+    
+    if (!description) {
+      return data;
+    }
+    
+      // crude but simple way to search per line
+      description = description.replace(/<\\p>|<br\\?>/ig, '\n');
+
+      let match: RegExpExecArray;
+      for (const [key, currency] of Object.entries(dnd5e.config.currencies)) {
+        const rgx = new RegExp(`(?<=Equipment:.*?)([0-9]+)\\s*(?:${currency.abbreviation}|${key})`, 'gi');
+        while (match = rgx.exec(description)) {
+          data[key] += Number(match[1]);
+        }
+      }
+
+    return data;
   }
 
   /** @inheritdoc */
@@ -97,3 +125,28 @@ export class CurrencyAdvancement extends dnd5e.documents.advancement.Advancement
   }
   
 }
+
+Hooks.on('preUpdateItem', (oldDocument: any, updateData: any, options: object) => {
+  const oldAdvancements = new Map<string, AdvancementData>();
+
+  for (const advancement of oldDocument._source.system.advancement ?? []) {
+    oldAdvancements.set(advancement._id, advancement);
+  }
+
+  advancementLoop: for (const advancement of (updateData.system.advancement as AdvancementData[]) ?? []) {
+    if (oldAdvancements.has(advancement._id)) {
+      continue;
+    }
+    if (advancement.type !== CurrencyAdvancement.typeName) {
+      continue;
+    }
+    for (const key of Object.keys(dnd5e.config.currencies)) {
+      // Was configured during create
+      if (advancement.configuration[key] !== 0) {
+        continue advancementLoop;
+      }
+    }
+    
+    advancement.configuration = CurrencyAdvancement.autoDetectCurrencies(updateData?.system?.description?.value || oldDocument?.system?.description?.value);
+  }
+})
