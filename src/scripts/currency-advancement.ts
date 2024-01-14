@@ -1,6 +1,5 @@
 import { CurrencyAdvancementConfig } from "./currency-advancement-config.js";
 import { CurrencyAdvancementFlow } from "./currency-advancement-flow.js";
-import { AdvancementData } from "./types/dnd5e.js";
 import type { DataSchema } from "./types/foundry";
 
 export interface ICurrencyAdvancementData {
@@ -45,7 +44,7 @@ export class CurrencyAdvancement extends dnd5e.documents.advancement.Advancement
       validItemTypes: new Set(["background", "class", "race"]),
       apps: {
         config: CurrencyAdvancementConfig,
-        // flow: CurrencyAdvancementFlow,
+        flow: CurrencyAdvancementFlow,
       },
     });
   }
@@ -65,27 +64,36 @@ export class CurrencyAdvancement extends dnd5e.documents.advancement.Advancement
   }
 
   /** @inheritdoc */
-  public async apply(level: number, flowFormData: object): Promise<void> {
-    const currencyUpdate = deepClone((this.actor as any).system.currency);
-    for (const currencyKey in this.configuration) {
-      currencyUpdate[currencyKey] += this.configuration[currencyKey];
+  public async apply(level: number, flowFormData: {skip: boolean}): Promise<void> {
+    const actorUpdate = deepClone((this.actor as any).system.currency);
+    const advancementUpdate = deepClone(this.value);
+    if (!flowFormData.skip) {
+      for (const currencyKey in this.configuration) {
+        actorUpdate[currencyKey] += this.configuration[currencyKey];
+        advancementUpdate[currencyKey] += this.configuration[currencyKey];
+      }
     }
-    (this.actor as any as foundry.abstract.DataModel).updateSource({system: {currency: currencyUpdate}});
+    (this.actor as any as foundry.abstract.DataModel).updateSource({system: {currency: actorUpdate}});
+    this.updateSource({value: advancementUpdate});
   }
 
   /** @inheritdoc */
-  public async restore(level: number, reverseData: object): Promise<void> {
+  public async restore(level: number, reverseData: any): Promise<void> {
     this.apply(level, reverseData);
   }
 
   /** @inheritdoc */
   public async reverse(level: number): Promise<object> {
-    const currencyUpdate = deepClone((this.actor as any).system.currency);
-    for (const currencyKey in this.configuration) {
-      currencyUpdate[currencyKey] = Math.max(0, currencyUpdate[currencyKey] - this.configuration[currencyKey]);
+    const actorUpdate = deepClone((this.actor as any).system.currency);
+    const advancementUpdate = deepClone(this.value);
+    for (const currencyKey in this.value) {
+      const newTotal = Math.max(0, actorUpdate[currencyKey] - this.value[currencyKey]);
+      advancementUpdate[currencyKey] = actorUpdate[currencyKey] - newTotal;
+      actorUpdate[currencyKey] = newTotal;
     }
-    (this.actor as any as foundry.abstract.DataModel).updateSource({system: {currency: currencyUpdate}});
-    return {};
+    (this.actor as any as foundry.abstract.DataModel).updateSource({system: {currency: actorUpdate}});
+    this.updateSource({value: advancementUpdate})
+    return advancementUpdate;
   }
   
 }

@@ -124,8 +124,8 @@ class AdvancementCls<CONFIG = any, VALUE = any> extends foundry.abstract.DataMod
 
   public _id?: string;
   public type: string;
-  public configuration: T;
-  public value: any;
+  public configuration: CONFIG;
+  public value: VALUE;
   public level?: number;
   public title?: string;
   public icon?: string;
