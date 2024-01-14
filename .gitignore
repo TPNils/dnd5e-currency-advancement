@@ -1,6 +1,7 @@
 /*
 !/.gitignore
 !/.github
+!/assets
 !/gulpfile.ts
 !/config.json
 !/package.json
