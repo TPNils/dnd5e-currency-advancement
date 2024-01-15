@@ -133,7 +133,7 @@ Hooks.on('preUpdateItem', (oldDocument: any, updateData: any, options: object) =
     oldAdvancements.set(advancement._id, advancement);
   }
 
-  advancementLoop: for (const advancement of (updateData.system.advancement as AdvancementData[]) ?? []) {
+  advancementLoop: for (const advancement of (updateData.system?.advancement as AdvancementData[]) ?? []) {
     if (oldAdvancements.has(advancement._id)) {
       continue;
     }
