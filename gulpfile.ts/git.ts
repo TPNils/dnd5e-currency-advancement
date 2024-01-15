@@ -106,7 +106,7 @@ export class Git {
     const cmd = await cli.execPromise('git status --porcelain');
     cli.throwIfError(cmd);
     if (typeof cmd.stdout === 'string' && cmd.stdout.length > 0) {
-      // throw new Error("You must first commit your pending changes");
+      throw new Error("You must first commit your pending changes");
     }
   }
 

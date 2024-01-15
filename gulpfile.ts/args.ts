@@ -24,7 +24,6 @@ class Args {
       git.getLatestVersionTag(),
       foundryManifest.getManifest().file.version,
     ]);
-    console.log(versions)
     const latestVersion = versions.filter(v => !!v).sort(this.sortVersions)[versions.length - 1];
     if (latestVersion.startsWith('v')) {
       return latestVersion.substring(1)
