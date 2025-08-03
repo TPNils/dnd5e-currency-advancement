@@ -41,6 +41,7 @@ export class CurrencyAdvancement extends dnd5e.documents.advancement.Advancement
         value: CurrencyAdvancementData,
       },
       icon: "icons/commodities/currency/coins-assorted-mix-copper-silver-gold.webp",
+      typeIcon: "icons/commodities/currency/coins-assorted-mix-copper-silver-gold.webp",
       title: game.i18n.localize("DND5E.Currency"),
       // hint: '0 ' + game.i18n.localize("DND5E.CurrencyGP"),
       validItemTypes: new Set(["background", "class", "race"]),
