@@ -3,7 +3,12 @@
     <thead>
       <tr>
       {{#each currencies as |currency|}}
-        <th style="width:{{@root.currenciesWidthPercent}}%">{{currency.label}}</th>
+        <th style="width:{{@root.currenciesWidthPercent}}%">
+          <div style="display: flex; justify-content: center; align-items: center; gap: 4px; margin: 2px;">
+            <i data-tooltip="{{currency.label}}" style="background-image: url('{{currency.icon}}'); display: inline-block; width: 1em; height: 1em;"></i>
+            <span>{{currency.label}}</span>
+          </div>
+        </th>
       {{/each}}
       </tr>
     </thead>
