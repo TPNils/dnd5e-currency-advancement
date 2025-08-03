@@ -19,7 +19,13 @@ export class CurrencyAdvancementConfig extends dnd5e.applications.advancement.Ad
   }
 
   public static getCurrencies(): Array<{key: string;} & Currency> {
-    return Object.entries(dnd5e.config.currencies).map(([key, currency]) => {
+    // Pre dnd 4.1.0(?) currencies had fixed urls
+    const currencies: dnd5e.config.currencies = {};
+    for (const key in dnd5e.config.currencies) {
+      currencies[key] = {...dnd5e.config.currencies[key]};
+      currencies[key].icon ??= `systems/dnd5e/icons/currency/${currencies[key].label.toLowerCase()}.webp`;
+    }
+    return Object.entries(currencies).map(([key, currency]) => {
       return {
         ...(currency as any),
         key: key,
