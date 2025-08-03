@@ -10,3 +10,11 @@ After selecting the currency advancement, you can configure how much the charact
 
 When the background or class is dragged into the character, you will see this simple prompt to complete the final step.
 ![Player step](/assets/player-step.png)
+
+## Compatibility
+Tested if this module is working for the following confifurations
+- FVTT 10.291 & DND5e 2.2.1
+- FVTT 11.315 & DND5e 3.2.1
+- FVTT 12.331 & DND5e 3.2.1
+- FVTT 12.331 & DND5e 4.4.4
+- FVTT 13.346 & DND5e 5.0.4

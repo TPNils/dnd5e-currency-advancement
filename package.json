@@ -7,6 +7,7 @@
     "package": "foundry-vtt-build-tools buildZip",
     "compileReadme": "foundry-vtt-build-tools compileReadme",
     "dev": "foundry-vtt-build-tools watch",
+    "dev10": "foundry-vtt-build-tools watch -fi v10",
     "dev11": "foundry-vtt-build-tools watch -fi v11",
     "dev12": "foundry-vtt-build-tools watch -fi v12",
     "dev13": "foundry-vtt-build-tools watch -fi v13",
@@ -21,6 +22,6 @@
   "license": "MIT",
   "devDependencies": {
     "@league-of-foundry-developers/foundry-vtt-types": "^9.280.0",
-    "foundry-vtt-build-tools": "github:TPNils/foundry-vtt-build-tools#685d75396ce3fba1f099ef60af99904498b34051"
+    "foundry-vtt-build-tools": "github:TPNils/foundry-vtt-build-tools#1da6a5b34e64e3a3572c99f4d0e752883474e2fd"
   }
 }

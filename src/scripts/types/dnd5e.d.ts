@@ -111,7 +111,7 @@ class AdvancementCls<CONFIG = any, VALUE = any> extends foundry.abstract.DataMod
     multiLevel: boolean;
     order: number;
     title: string;
-    validItemTypes: string[];
+    validItemTypes: Set<string>;
   };
 
   public readonly id: string;
@@ -266,7 +266,10 @@ declare global {
       }
     }
     namespace config {
-      class advancementTypes {static [key: string]: typeof dnd5e.documents.advancement.Advancement<any>;};
+      class advancementTypes {static [key: string]: (typeof dnd5e.documents.advancement.Advancement<any> | {
+        documentClass: typeof dnd5e.documents.advancement.Advancement<any>;
+        validItemTypes: Set<string>;
+      });};
       namespace advancementTypes {
         const AbilityScoreImprovement: typeof dnd5e.documents.advancement.Advancement<any>;
         const HitPoints: typeof dnd5e.documents.advancement.Advancement<any>;

@@ -2,6 +2,7 @@ import { CurrencyAdvancementConfig } from "./currency-advancement-config.js";
 import { CurrencyAdvancementFlow } from "./currency-advancement-flow.js";
 import { AdvancementData } from "./types/dnd5e.js";
 import type { DataSchema } from "./types/foundry";
+import { Version } from "./version.js";
 
 export interface ICurrencyAdvancementData {
   cp: number;
@@ -33,7 +34,7 @@ class CurrencyAdvancementData extends foundry.abstract.DataModel<ICurrencyAdvanc
 
 export class CurrencyAdvancement extends dnd5e.documents.advancement.Advancement<ICurrencyAdvancementData, ICurrencyAdvancementData> {
 
-  static get metadata() {
+  static get metadata(): typeof dnd5e.documents.advancement.Advancement['metadata'] {
     return foundry.utils.mergeObject(super.metadata, {
       dataModels: {
         configuration: CurrencyAdvancementData,
@@ -93,8 +94,8 @@ export class CurrencyAdvancement extends dnd5e.documents.advancement.Advancement
 
   /** @inheritdoc */
   public async apply(level: number, flowFormData: {skip: boolean}): Promise<void> {
-    const actorUpdate = deepClone((this.actor as any).system.currency);
-    const advancementUpdate = deepClone(this.value);
+    const actorUpdate = foundry.utils.deepClone((this.actor as any).system.currency);
+    const advancementUpdate = foundry.utils.deepClone(this.value);
     if (!flowFormData.skip) {
       for (const currencyKey in this.configuration) {
         actorUpdate[currencyKey] += this.configuration[currencyKey];
@@ -112,8 +113,8 @@ export class CurrencyAdvancement extends dnd5e.documents.advancement.Advancement
 
   /** @inheritdoc */
   public async reverse(level: number): Promise<object> {
-    const actorUpdate = deepClone((this.actor as any).system.currency);
-    const advancementUpdate = deepClone(this.value);
+    const actorUpdate = foundry.utils.deepClone((this.actor as any).system.currency);
+    const advancementUpdate = foundry.utils.deepClone(this.value);
     for (const currencyKey in this.value) {
       const newTotal = Math.max(0, actorUpdate[currencyKey] - this.value[currencyKey]);
       advancementUpdate[currencyKey] = actorUpdate[currencyKey] - newTotal;
@@ -150,3 +151,16 @@ Hooks.on('preUpdateItem', (oldDocument: any, updateData: any, options: object) =
     advancement.configuration = CurrencyAdvancement.autoDetectCurrencies(updateData?.system?.description?.value || oldDocument?.system?.description?.value);
   }
 })
+
+// Register advancement
+Hooks.on('init', () => {
+  const dndVersion = Version.fromString((game.system as any).version);
+  if (dndVersion >= new Version(3, 1)) {
+    dnd5e.config.advancementTypes[CurrencyAdvancement.typeName] = {
+      documentClass: CurrencyAdvancement,
+      validItemTypes: CurrencyAdvancement.metadata.validItemTypes,
+    };
+  } else {
+    dnd5e.config.advancementTypes[CurrencyAdvancement.typeName] = CurrencyAdvancement;
+  }
+});
