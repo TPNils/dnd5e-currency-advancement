@@ -3,7 +3,7 @@
   "title": "DnD5e Currency Advancement",
   "version": "v1.0.2",
   "compatibility": {
-    "minimum": "10.291",
+    "minimum": "11",
     "verified": "13.346"
   },
   "description": "Allow to gain currency from backgrounds for the dnd5e system",
