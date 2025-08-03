@@ -20,10 +20,4 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-The icon file arrow-up.svg, distributed with this module is licensed under the following terms:
-Licensed under the Crative Commons v3.0: http://creativecommons.org/licenses/by-sa/3.0/
-Obtained from https://www.svgviewer.dev/s/472226/up.
-
-The icon file sword.svg, distributed with this module is licensed under the following terms:
-Licensed under the CC0 License: https://www.svgrepo.com/page/licensing#CC0
-Obtained from https://www.svgrepo.com/svg/103610/sword.
+The icon files in src/assets/svg can be found at src/assets/svg/LICENSE
