@@ -1,6 +1,6 @@
 {
   "name": "dnd5e-currency-advancement",
-  "version": "v1.0.2",
+  "version": "v1.0.3",
   "main": "index.js",
   "scripts": {
     "build": "foundry-vtt-build-tools build",
