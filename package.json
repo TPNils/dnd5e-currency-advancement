@@ -22,6 +22,6 @@
   "license": "MIT",
   "devDependencies": {
     "@league-of-foundry-developers/foundry-vtt-types": "^9.280.0",
-    "foundry-vtt-build-tools": "github:TPNils/foundry-vtt-build-tools#1da6a5b34e64e3a3572c99f4d0e752883474e2fd"
+    "foundry-vtt-build-tools": "github:TPNils/foundry-vtt-build-tools#v0.3.0"
   }
 }
